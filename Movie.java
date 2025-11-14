@@ -102,6 +102,8 @@ public class Movie {
         return list;
     }
 
+    // 提供默认路径加载方法，方便直接调用
+    // 假设 CSV 文件在项目根目录下的 data 文件夹中，文件名为 movies.csv
     public static ArrayList<Movie> loadFromCsv() {
         return loadFromCsv("data/movies.csv");
     }
