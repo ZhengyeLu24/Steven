@@ -113,7 +113,7 @@ public class User {
                 String wl = u.getWatchlist() != null ? u.getWatchlist().toCsv() : "";
                 String his = u.getHistory() != null ? u.getHistory().toCsv() : "";
                 // "toCsv"method (In class "Watchlist" and "History") makes the elements in "Watchlist"and "History" transfer to the String type
-                bw.write(u.getUsername() + "," + u.getPassword() + "," + wl + "," + his);
+                bw.write(u.getUserName() + "," + u.getPassword() + "," + wl + "," + his);
                 bw.newLine();
             }
             bw.flush();
