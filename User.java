@@ -9,13 +9,10 @@ public class User {
     // "History" is another class, history is an attribute of User
     private History history;
 
-    // Static Variable : Store all users
-    private static Map<String, User> allUsers = new HashMap<>();
-
     public User() {
     }
 
-    public User(String userName, String password, String watchlist, String history) {
+    public User(String userName, String password) {
         this.userName = userName;
         this.password = password;
         this.watchlist = new Watchlist();
@@ -62,7 +59,7 @@ public class User {
     public static HashMap<String, User> loadUsers(String path) {
         HashMap<String, User> users = new HashMap<>(); // Create a new map to store all users
         File file = new File(path);
-        if (!file.exists()) {return users};
+        if (!file.exists()) {return users;}
         BufferedReader br = null; // Declare a "Reader" variable,it will be initialized in "try"
         try {
             br = new BufferedReader(new FileReader(file));
@@ -74,7 +71,7 @@ public class User {
                     continue;
                 }
                 String[] parts = line.split(",", -1); //"-1" is used to save the blank field
-                if (parts.length < 4) {continue};
+                if (parts.length < 4) {continue;}
                 String username = parts[0].trim();
                 String password = parts[1].trim();
                 String watchlistCsv = parts[2].trim();
