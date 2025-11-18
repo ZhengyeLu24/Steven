@@ -9,6 +9,7 @@ public class User {
     // "History" is another class, history is an attribute of User
     private History history;
 
+
     public User() {
     }
 
@@ -55,8 +56,8 @@ public class User {
         this.history = history;
     }
 
-
-    public static HashMap<String, User> loadUsers(String path) {
+    // List<Movie> allMovies is used for a method that in History.
+    public static HashMap<String, User> loadUsers(String path,List<Movie> allMovies) {
         HashMap<String, User> users = new HashMap<>(); // Create a new map to store all users
         File file = new File(path);
         if (!file.exists()) {return users;}
@@ -68,7 +69,8 @@ public class User {
             while ((line = br.readLine()) != null) {
                 if (first) {
                     first = false;
-                    continue;
+                    continue;  /* If it is the first row"username,password,watchlist,history",
+                                  do not habdle.*/
                 }
                 String[] parts = line.split(",", -1); //"-1" is used to save the blank field
                 if (parts.length < 4) {continue;}
@@ -80,15 +82,15 @@ public class User {
                 User user = new User(username, password);// Create User's object
 
                 Watchlist wl = new Watchlist();
-                wl.fromCsv(watchlistCsv); //eg: Add "M008;M015;M071;M048;M056" to the list
+                wl.mergeFromCsv(watchlistCsv); // eg: Add "M008;M015;M071;M048;M056" to the list
 
                 History his = new History();
-                his.fromCsv(historyCsv);
+                his.mergeFromCsvWithDate(historyCsv);
 
                 user.setWatchlist(wl);
                 user.setHistory(his);
 
-                users.put(username, user); // Store in the map
+                users.put(username, user); // Store in the map."Username" is key.
             }
         } catch (IOException e) {
             System.out.println("[WARN] Failed to read users: " + e.getMessage());
@@ -110,8 +112,8 @@ public class User {
             bw.write("Username,Password,Watchlist,History");
             bw.newLine();
             for (User u : users.values()) {
-                String wl = u.getWatchlist() != null ? u.getWatchlist().toCsv() : "";
-                String his = u.getHistory() != null ? u.getHistory().toCsv() : "";
+                String wl = u.getWatchlist() != null ? u.getWatchlist().toCsvString() : "";
+                String his = u.getHistory() != null ? u.getHistory().toCsvString() : "";
                 // "toCsv"method (In class "Watchlist" and "History") makes the elements in "Watchlist"and "History" transfer to the String type
                 bw.write(u.getUserName() + "," + u.getPassword() + "," + wl + "," + his);
                 bw.newLine();
