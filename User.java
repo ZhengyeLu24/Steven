@@ -131,7 +131,7 @@ public class User {
             bw.flush();
             return true;
         } catch (IOException e) {
-            System.out.println("[WARN] Failed to save users: " + e.getMessage());
+            System.out.println("Failed to save users: " + e.getMessage());
             return false;
         } finally {
             try {
@@ -145,12 +145,12 @@ public class User {
         // check the new username
         if(username == null||username.equals("")) {return false;}
         if(users.containsKey(username)) {
-            System.out.println("[WARN] Username already exists: " + username);
+            System.out.println("Username already exists: " + username);
             return false;
         }
         // check the password
         if(password == null || password.equals("")) {
-            System.out.println("[WARN] Password cannot be empty");
+            System.out.println("Password cannot be empty");
             return false;
         }
         // Create the new user account
@@ -163,10 +163,10 @@ public class User {
     //Functionality for changing a user's password.
     public boolean changePassword(String oldPassword, String newPassword) {
         if( !this.password.equals(oldPassword)){
-            System.out.println("[WARN] Old password is incorrect!");
+            System.out.println("Old password is incorrect!");
             return false;}
         if(newPassword == null || newPassword.equals("")) {
-            System.out.println("[WARN] New password cannot be empty");
+            System.out.println("New password cannot be empty");
             return false;
         }
         this.password = newPassword;
@@ -175,7 +175,7 @@ public class User {
     // The overloading of the method "changePassword"
     public boolean changePassword(String oldPassword, String newPassword, String confirmPassword) {
         if(!confirmPassword.equals(newPassword)){
-            System.out.println("[WARN] Two passwords don't match!");
+            System.out.println("Two passwords don't match!");
             return false;
         }
         return changePassword(oldPassword, newPassword);
