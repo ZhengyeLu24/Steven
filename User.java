@@ -20,7 +20,7 @@ public class User {
         this.history = new History();
     }
 
-    public User02(String userName, String password, Watchlist watchlist, History history) {
+    public User(String userName, String password, Watchlist watchlist, History history) {
         this.userName = userName;
         this.password = password;
         this.watchlist = watchlist;
