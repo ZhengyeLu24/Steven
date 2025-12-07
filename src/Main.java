@@ -71,7 +71,7 @@ public class Main {
         String password = scanner.nextLine().trim();
 
         User user = users.get(username);
-        if (user != null && user.getPassword().equals(password)) {
+        if (user != null && user.matchesPassword(password)) {
             currentUser = user;
             System.out.println("Login successful! Welcome, " + user.getUserName());
         } else {
@@ -88,9 +88,12 @@ public class Main {
 
         //Use a temporary User object to call the instance method createNewUser
         User helper = new User();
-        boolean ok = helper.createNewUser(newUsername, newPassword, users);
+        String hashed = User.hashPassword(newPassword);
+        boolean ok = helper.createNewUser(newUsername, hashed, users);
+
         if (ok) {
-            System.out.println("User created successfully! You can now login with your new account.");
+            System.out.println("You can now login with your new account.");
+            System.out.println("[NOTE] Your password is now stored in hashed form as "+hashed);
         } else {
             System.out.println("Failed to create user. Please try again.");
         }
