@@ -174,22 +174,46 @@ public class User {
 
     //Functionality for changing a user's password.
     public boolean changePassword(String oldPassword, String newPassword) {
-        if( !this.password.equals(oldPassword)){
-            System.out.println("Old password is incorrect!");
-            return false;}
-        if(newPassword == null || newPassword.equals("")) {
-            System.out.println("New password cannot be empty");
+        if (!matches(this.password, oldPassword)) { // Support Hash password
+            System.out.println("[WARN] Old password is incorrect!");
             return false;
         }
-        this.password = newPassword;
+        if (newPassword == null || newPassword.equals("")) {
+            System.out.println("[WARN] New password cannot be empty");
+            return false;
+        }
+        this.password = hashPassword(newPassword);
         return true;
     }
-    // The overloading of the method "changePassword"
+
     public boolean changePassword(String oldPassword, String newPassword, String confirmPassword) {
-        if(!confirmPassword.equals(newPassword)){
-            System.out.println("Two passwords don't match!");
+        if (!confirmPassword.equals(newPassword)) {
+            System.out.println("[WARN] Two passwords don't match!");
             return false;
         }
         return changePassword(oldPassword, newPassword);
     }
+
+    // Compute a simple hash value for a password
+    public static String hashPassword(String password) {
+        long hash = 7;
+        for (int i = 0; i < password.length(); i++) {
+            hash = hash * 31 + password.charAt(i);
+        }
+        return "H" + Long.toString(hash); // 'H' as a "Hash mark"
+    }
+
+    // Check match between stored password and user input
+    public static boolean matches(String stored, String rawInput) {
+        if (stored.startsWith("H")) {
+            return stored.equals(hashPassword(rawInput)); // Comparison
+        }
+        return stored.equals(rawInput);
+    }
+
+    // Public helper for Main.login()
+    public boolean matchesPassword(String rawInput) {
+        return matches(this.password, rawInput);
+    }
+
 }
