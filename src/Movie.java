@@ -5,21 +5,21 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class Movie {
-    // 电影唯一编号，例如 "M001"
+    // Unique movie ID, e.g., "M001"
     private String id;
-    // 片名
+    // Movie title
     private String title;
-    // 类型，例如 "Drama"、"Action"
+    // Genre, e.g., "Drama", "Action"
     private String type;
-    // 上映年份
+    // Release year
     private int year;
-    // 评分（0.0 ~ 10.0）
+    // Rating (0.0 ~ 10.0)
     private double rating;
 
-    // 无参构造器（方便初学者与后续扩展）
+    // No-arg constructor (convenient for beginners and future extension)
     public Movie() {}
 
-    // 带参构造器
+    // Parameterized constructor
     public Movie(String id, String title, String type, int year, double rating) {
         this.id = id;
         this.title = title;
@@ -28,7 +28,7 @@ public class Movie {
         this.rating = rating;
     }
 
-    // 基本的 getter / setter
+    // Basic getters / setters
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
 
@@ -45,59 +45,62 @@ public class Movie {
     public void setRating(double rating) { this.rating = rating; }
 
     /**
-     * 从一行 CSV 文本解析 Movie 对象。
-     * 格式固定为：id,title,genre,year,rating
+     * Parse a Movie object from a CSV line.
      */
     public static Movie fromCsvRow(String row) {
         if (row == null) {
-            throw new IllegalArgumentException("CSV 行为空");
+            throw new IllegalArgumentException("CSV row is empty");
         }
-        // 按逗号拆分为 5 列
+        // Split into 5 columns by comma
         String[] parts = row.split(",");
-        // 简单格式校验：必须正好 5 列
+        // Simple format check: must be exactly 5 columns
         if (parts.length != 5) {
-            throw new IllegalArgumentException("CSV 格式错误，需 5 列");
+            throw new IllegalArgumentException("CSV format error, requires 5 columns");
         }
-        // 依次读取各列，并用 trim() 去掉两端空白
+        // Read columns sequentially and trim whitespace
         String id = parts[0].trim();
         String title = parts[1].trim();
-        String type = parts[2].trim(); // 第三列：类型（去除前后空白）
-        int year = Integer.parseInt(parts[3].trim()); // 第四列：年份（转为整数）
-        double rating = Double.parseDouble(parts[4].trim()); // 第五列：评分（转为小数）
-        return new Movie(id, title, type, year, rating);
+        String type = parts[2].trim();
+        int year = Integer.parseInt(parts[3].trim()); // 4th column: Year (parsed as integer)
+        double rating = Double.parseDouble(parts[4].trim()); // 5th column: Rating (parsed as double)
+        String g = type.toLowerCase();
+        if (g.equals("biography") || g.equals("documentary")) {
+            return new Documentary(id, title, type, year, rating);
+        }
+        return new FeatureFilm(id, title, type, year, rating);
     }
 
     /**
-     * 批量从 CSV 文件加载电影列表。自动跳过首行表头（若以 "id," 开头）。
+     * Batch load movie list from CSV file. Automatically skip header if it starts with "id,".
      */
     public static ArrayList<Movie> loadFromCsv(String csvPath) {
-        ArrayList<Movie> list = new ArrayList<Movie>(); // 存放所有读取到的电影
+        ArrayList<Movie> list = new ArrayList<Movie>(); // Store all loaded movies
         BufferedReader br = null;
         try {
-            br = new BufferedReader(new FileReader(csvPath)); // 打开文件并按行读取
+            br = new BufferedReader(new FileReader(csvPath)); // Open file and read line by line
             String line;
             boolean first = true;
             while ((line = br.readLine()) != null) {
-                line = line.trim(); // 去除每行两端空白
-                if (line.isEmpty()) continue; // 跳过空行
+                line = line.trim(); // Trim whitespace from both ends
+                if (line.isEmpty()) continue; // Skip empty lines
                 if (first) {
                     first = false;
                     if (line.toLowerCase().startsWith("id,")) {
-                        continue; // 跳过表头
+                        continue; // Skip header
                     }
                 }
                 try {
-                    Movie m = Movie.fromCsvRow(line); // 解析一行生成 Movie 对象
+                    Movie m = Movie.fromCsvRow(line); // Parse a line to generate Movie object
                     list.add(m);
                 } catch (Exception e) {
-                    System.err.println("解析失败，跳过: " + line); // 某行数据不合法，打印信息并跳过
+                    System.err.println("Parse failed, skipping: " + line); // Invalid data, print info and skip
                 }
             }
         } catch (IOException e) {
-            System.err.println("读取文件失败: " + e.getMessage());
+            System.err.println("Failed to read file: " + e.getMessage());
         } finally {
             if (br != null) {
-                try { br.close(); } catch (IOException ignored) {} // 关闭文件
+                try { br.close(); } catch (IOException ignored) {} // Close file
             }
         }
         return list;
